@@ -58,10 +58,57 @@ const ProductsPage = () => {
     console.log('Filtering with subcategory:', subcategory, 'Products count:', products.length);
     // Filter products based on subcategory
     if (subcategory && subcategory !== 'all') {
-      const filtered = products.filter(product => 
-        product.name.toLowerCase().includes(subcategory.toLowerCase()) ||
-        product.description?.toLowerCase().includes(subcategory.toLowerCase())
-      );
+      const filtered = products.filter(product => {
+        // Normalize both the product subcategory and filter for comparison
+        const productSubcategory = (product.subcategory || '').toLowerCase().trim();
+        const filterSubcategory = subcategory.toLowerCase().replace(/-/g, ' ').trim();
+        
+        // Check for exact match first
+        if (productSubcategory === filterSubcategory) {
+          return true;
+        }
+        
+        // Check if product subcategory contains the filter term
+        if (productSubcategory.includes(filterSubcategory)) {
+          return true;
+        }
+        
+        // Check if filter term contains the product subcategory
+        if (filterSubcategory.includes(productSubcategory)) {
+          return true;
+        }
+        
+        // Special handling for common subcategory mappings
+        const subcategoryMappings: { [key: string]: string[] } = {
+          'track pants': ['track pants', 'track pant', 'trackpants', 'trackpant'],
+          'round neck': ['round neck', 'roundneck', 'round-neck'],
+          'v neck': ['v neck', 'v-neck', 'vneck'],
+          'polo': ['polo', 'polo (collar)', 'collar'],
+          'flat ankle': ['flat ankle', 'flat-ankle', 'flatankle'],
+          'full length': ['full length', 'full-length', 'fulllength'],
+          'churidhar ankle': ['churidhar ankle', 'churidhar-ankle'],
+          'churidhar full length': ['churidhar full length', 'churidhar-full-length'],
+          '3/4 length': ['3/4 length', '3-4 length', '3/4', '3-4'],
+          'night t-shirt': ['night t-shirt', 'night tshirt', 'night-tshirt'],
+          'lycra cotton': ['lycra cotton', 'lycra-cotton'],
+          'basic slips': ['basic slips', 'basic-slips', 'basic slip'],
+          'adjustment slips': ['adjustment slips', 'adjustment-slips', 'adjustment slip']
+        };
+        
+        // Check mappings
+        for (const [key, variations] of Object.entries(subcategoryMappings)) {
+          if (variations.includes(filterSubcategory) && variations.some(v => productSubcategory.includes(v))) {
+            return true;
+          }
+        }
+        
+        // Also check product name and description for subcategory terms
+        const productName = product.name.toLowerCase();
+        const productDescription = (product.description || '').toLowerCase();
+        
+        return productName.includes(filterSubcategory) || productDescription.includes(filterSubcategory);
+      });
+      
       console.log('Filtered products count:', filtered.length);
       setFilteredProducts(filtered);
       setSelectedFilter(subcategory);
@@ -119,10 +166,48 @@ const ProductsPage = () => {
     if (filter === 'All' || filter === 'all') {
       setFilteredProducts(products);
     } else {
-      const filtered = products.filter(product => 
-        product.name.toLowerCase().includes(filter.toLowerCase()) ||
-        product.description.toLowerCase().includes(filter.toLowerCase())
-      );
+      const filterLower = filter.toLowerCase().trim();
+      const filtered = products.filter(product => {
+        const productSubcategory = (product.subcategory || '').toLowerCase().trim();
+        const productName = product.name.toLowerCase();
+        const productDescription = (product.description || '').toLowerCase();
+        
+        // Direct match
+        if (productSubcategory === filterLower) {
+          return true;
+        }
+        
+        // Contains match
+        if (productSubcategory.includes(filterLower) || 
+            productName.includes(filterLower) || 
+            productDescription.includes(filterLower)) {
+          return true;
+        }
+        
+        // Special mappings for common terms
+        const mappings: { [key: string]: string[] } = {
+          'track pants': ['track pants', 'track pant', 'trackpants'],
+          'round neck': ['round neck', 'roundneck'],
+          'v-neck': ['v neck', 'v-neck', 'vneck'],
+          'polo': ['polo', 'collar'],
+          'flat ankle': ['flat ankle', 'flatankle'],
+          'full length': ['full length', 'fulllength'],
+          'churidhar': ['churidhar ankle', 'churidhar full length'],
+          'shimmer': ['shimmer'],
+          '3/4 length': ['3/4', '3-4'],
+          'night t-shirts': ['night t-shirt', 'night tshirt'],
+          'shorts': ['shorts', 'short'],
+          'lycra cotton': ['lycra cotton'],
+          'polyester': ['polyester', 'poliston']
+        };
+        
+        const variations = mappings[filterLower] || [filterLower];
+        return variations.some(variation => 
+          productSubcategory.includes(variation) || 
+          productName.includes(variation) || 
+          productDescription.includes(variation)
+        );
+      });
       setFilteredProducts(filtered);
     }
   };
@@ -210,7 +295,7 @@ const ProductsPage = () => {
             {subcategory && subcategory !== 'all' && (
               <>
                 <span className="mx-2">/</span>
-                <span className="text-gray-900 capitalize">{subcategory}</span>
+                <span className="text-gray-900 capitalize">{subcategory.replace(/-/g, ' ')}</span>
               </>
             )}
           </nav>
