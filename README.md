@@ -34,8 +34,8 @@ A modern e-commerce platform built with React, TypeScript, and Supabase.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Gamedenoffiz/[repository-name].git
-   cd [repository-name]
+   git clone https://github.com/Gamedenoffiz/Garments1.git
+   cd Garments1
    ```
 
 2. Install dependencies:
