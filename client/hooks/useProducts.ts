@@ -278,7 +278,10 @@ export function useProducts() {
         stack: err instanceof Error ? err.stack : undefined,
         supabaseError: err,
       });
-      return [];
+
+      // Return mock data as fallback when database is not ready
+      console.warn("⚠️ Database not ready, returning mock hot sale products");
+      return mockProducts.filter((p) => p.is_hot_sale).slice(0, 6);
     }
   };
 
