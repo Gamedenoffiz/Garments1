@@ -261,19 +261,13 @@ export function useProducts() {
         return [];
       }
 
+      // Start with a simple query to test basic connectivity
       const { data, error } = await supabase
         .from("products")
-        .select(
-          `
-          *,
-          category:categories(name, slug),
-          images:product_images(*),
-          variants:product_variants(*)
-        `,
-        )
+        .select("*")
         .eq("is_hot_sale", true)
         .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .limit(10);
 
       if (error) throw error;
       return data || [];
