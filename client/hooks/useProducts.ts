@@ -215,7 +215,10 @@ export function useProducts() {
       if (error) throw error;
       return data;
     } catch (err) {
-      console.error("Error fetching product:", err);
+      console.error(
+        "Error fetching product:",
+        err instanceof Error ? err.message : String(err),
+      );
       return null;
     }
   };
@@ -241,7 +244,10 @@ export function useProducts() {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.error("Error fetching products by category:", err);
+      console.error(
+        "Error fetching products by category:",
+        err instanceof Error ? err.message : String(err),
+      );
       return [];
     }
   };
@@ -291,7 +297,10 @@ export function useProducts() {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.error("Error fetching all products:", err);
+      console.error(
+        "Error fetching all products:",
+        err instanceof Error ? err.message : String(err),
+      );
       return [];
     }
   };
@@ -321,7 +330,10 @@ export function useProducts() {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.error("Error fetching related products:", err);
+      console.error(
+        "Error fetching related products:",
+        err instanceof Error ? err.message : String(err),
+      );
       return [];
     }
   };
@@ -349,7 +361,10 @@ export function useProducts() {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.error("Error fetching recommended products:", err);
+      console.error(
+        "Error fetching recommended products:",
+        err instanceof Error ? err.message : String(err),
+      );
       return [];
     }
   };
@@ -373,7 +388,10 @@ export function useProducts() {
       if (error) throw error;
       return data;
     } catch (err) {
-      console.error("Error fetching product by id:", err);
+      console.error(
+        "Error fetching product by id:",
+        err instanceof Error ? err.message : String(err),
+      );
       return null;
     }
   };
