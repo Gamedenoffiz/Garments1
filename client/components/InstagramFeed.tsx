@@ -18,13 +18,16 @@ export default function InstagramFeed() {
       try {
         // Try to fetch from a testimonials table, or create mock data based on actual products
         const { data: products, error } = await supabase
-          .from('products')
-          .select('name, category:categories(name)')
-          .eq('is_active', true)
+          .from("products")
+          .select("name, category:categories(name)")
+          .eq("is_active", true)
           .limit(8);
 
         if (error) {
-          console.error('Error fetching products for testimonials:', error);
+          console.error(
+            "Error fetching products for testimonials:",
+            error.message || String(error),
+          );
         } else {
           // Generate dynamic testimonials based on actual products
           const testimonials = (products || []).map((product: any, index) => ({
@@ -32,12 +35,12 @@ export default function InstagramFeed() {
             content: generateTestimonial(product.name, product.category?.name),
             user: `@customer${index + 1}`,
             likes: Math.floor(Math.random() * 300) + 50,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
           }));
           setSocialPosts(testimonials);
         }
       } catch (error) {
-        console.error('Error generating testimonials:', error);
+        console.error("Error generating testimonials:", error);
       } finally {
         setLoading(false);
       }
@@ -55,10 +58,12 @@ export default function InstagramFeed() {
       `👕 ${productName} is exactly what I was looking for!`,
       `🎨 Great colors and quality on the ${productName}!`,
       `💪 Perfect for my needs - ${productName} is fantastic!`,
-      `👗 ${productName} fits perfectly and looks amazing!`
+      `👗 ${productName} fits perfectly and looks amazing!`,
     ];
-    
-    return testimonialTemplates[Math.floor(Math.random() * testimonialTemplates.length)];
+
+    return testimonialTemplates[
+      Math.floor(Math.random() * testimonialTemplates.length)
+    ];
   };
 
   if (loading) {
@@ -71,8 +76,11 @@ export default function InstagramFeed() {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1,2,3,4,5,6,7,8].map((i) => (
-              <div key={i} className="bg-gray-200 rounded-lg p-4 animate-pulse h-32" />
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div
+                key={i}
+                className="bg-gray-200 rounded-lg p-4 animate-pulse h-32"
+              />
             ))}
           </div>
         </div>
@@ -131,7 +139,8 @@ export default function InstagramFeed() {
           <div className="bg-gradient-to-r from-[#7C3AED] to-[#2563EB] rounded-lg p-8 text-white">
             <h3 className="text-[24px] font-bold mb-2">Share Your Style!</h3>
             <p className="text-[16px] opacity-90 mb-4">
-              Tag us in your photos wearing our products for a chance to be featured
+              Tag us in your photos wearing our products for a chance to be
+              featured
             </p>
             <div className="flex justify-center space-x-4">
               <span className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">

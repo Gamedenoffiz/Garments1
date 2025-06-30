@@ -19,45 +19,48 @@ export default function FeaturedArticle() {
       try {
         // Generate articles based on actual product categories
         const { data: categories, error } = await supabase
-          .from('categories')
-          .select('name, slug')
-          .eq('is_active', true)
+          .from("categories")
+          .select("name, slug")
+          .eq("is_active", true)
           .limit(3);
 
         if (error) {
-          console.error('Error fetching categories for articles:', error);
+          console.error("Error fetching categories for articles:", error);
         } else {
           const generatedArticles = generateArticleContent(categories || []);
           setArticles(generatedArticles);
         }
       } catch (error) {
-        console.error('Error generating articles:', error);
+        console.error("Error generating articles:", error);
         // Fallback articles
         setArticles([
           {
             id: "1",
             title: "How to Style Your Leggings for Every Occasion",
-            excerpt: "From casual days to workout sessions, discover the versatility of our legging collection.",
+            excerpt:
+              "From casual days to workout sessions, discover the versatility of our legging collection.",
             category: "Style Guide",
             readTime: "5 min read",
             featured: true,
           },
           {
-            id: "2", 
+            id: "2",
             title: "The Complete Guide to T-Shirt Fits",
-            excerpt: "Find your perfect fit with our comprehensive guide to men's and women's t-shirt sizing.",
+            excerpt:
+              "Find your perfect fit with our comprehensive guide to men's and women's t-shirt sizing.",
             category: "Sizing Guide",
             readTime: "3 min read",
             featured: false,
           },
           {
             id: "3",
-            title: "Fabric Care Tips for Long-Lasting Garments", 
-            excerpt: "Learn how to properly care for your garments to maintain quality and extend their lifespan.",
+            title: "Fabric Care Tips for Long-Lasting Garments",
+            excerpt:
+              "Learn how to properly care for your garments to maintain quality and extend their lifespan.",
             category: "Care Tips",
             readTime: "4 min read",
             featured: false,
-          }
+          },
         ]);
       } finally {
         setLoading(false);
@@ -71,33 +74,42 @@ export default function FeaturedArticle() {
     const articleTemplates = [
       {
         title: "How to Style Your {category} for Every Occasion",
-        excerpt: "From casual days to special events, discover the versatility of our {category} collection.",
+        excerpt:
+          "From casual days to special events, discover the versatility of our {category} collection.",
         category: "Style Guide",
         readTime: "5 min read",
         featured: true,
       },
       {
         title: "The Complete Guide to {category} Fits",
-        excerpt: "Find your perfect fit with our comprehensive guide to {category} sizing and styling.",
-        category: "Sizing Guide", 
+        excerpt:
+          "Find your perfect fit with our comprehensive guide to {category} sizing and styling.",
+        category: "Sizing Guide",
         readTime: "3 min read",
         featured: false,
       },
       {
         title: "Care Tips for Your {category}",
-        excerpt: "Learn how to properly care for your {category} to maintain quality and extend lifespan.",
+        excerpt:
+          "Learn how to properly care for your {category} to maintain quality and extend lifespan.",
         category: "Care Tips",
-        readTime: "4 min read", 
+        readTime: "4 min read",
         featured: false,
-      }
+      },
     ];
 
     return articleTemplates.map((template, index) => {
-      const category = categories[index] || { name: "Garments", slug: "general" };
+      const category = categories[index] || {
+        name: "Garments",
+        slug: "general",
+      };
       return {
         id: `article-${index}`,
         title: template.title.replace(/{category}/g, category.name),
-        excerpt: template.excerpt.replace(/{category}/g, category.name.toLowerCase()),
+        excerpt: template.excerpt.replace(
+          /{category}/g,
+          category.name.toLowerCase(),
+        ),
         category: template.category,
         readTime: template.readTime,
         featured: template.featured,
@@ -117,8 +129,11 @@ export default function FeaturedArticle() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-gray-200 rounded-xl h-[400px] animate-pulse" />
             <div className="space-y-6">
-              {[1,2].map(i => (
-                <div key={i} className="bg-gray-200 rounded-lg h-32 animate-pulse" />
+              {[1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="bg-gray-200 rounded-lg h-32 animate-pulse"
+                />
               ))}
             </div>
           </div>
@@ -143,27 +158,32 @@ export default function FeaturedArticle() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Featured Article */}
           <div className="lg:col-span-2">
-            <div className="bg-gradient-to-br from-[#7C3AED] to-[#2563EB] rounded-xl p-8 text-white h-[400px] flex flex-col justify-center">
-              <div className="space-y-4">
-                <span className="inline-block bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-medium">
-                  {articles[0].category}
-                </span>
-                <h3 className="text-[28px] md:text-[32px] font-bold leading-tight">
-                  {articles[0].title}
-                </h3>
-                <p className="text-[16px] opacity-90 leading-relaxed">
-                  {articles[0].excerpt}
-                </p>
-                <div className="flex items-center space-x-4 pt-4">
-                  <button className="bg-white text-[#7C3AED] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                    Read More
-                  </button>
-                  <span className="text-sm opacity-75">
-                    {articles[0].readTime}
+            {articles.length > 0 ? (
+              <div className="bg-gradient-to-br from-[#7C3AED] to-[#2563EB] rounded-xl p-8 text-white h-[400px] flex flex-col justify-center">
+                <div className="space-y-4">
+                  <span className="inline-block bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-medium">
+                    {articles[0]?.category || "Featured"}
                   </span>
+                  <h3 className="text-[28px] md:text-[32px] font-bold leading-tight">
+                    {articles[0]?.title || "Featured Article"}
+                  </h3>
+                  <p className="text-[16px] opacity-90 leading-relaxed">
+                    {articles[0]?.excerpt ||
+                      "Stay tuned for our latest style guides and tips."}
+                  </p>
+                  <div className="flex items-center space-x-4 pt-4">
+                    <button className="bg-white text-[#7C3AED] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                      Read More
+                    </button>
+                    <span className="text-sm opacity-75">
+                      {articles[0]?.readTime || "5 min read"}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-gray-200 rounded-xl h-[400px] animate-pulse" />
+            )}
           </div>
 
           {/* Side Articles */}
