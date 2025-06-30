@@ -120,35 +120,70 @@ export default function Header({
       name: "Men",
       hasDropdown: true,
       items: [
-        "T-Shirts",
-        "Round Neck T-Shirts",
-        "V-Neck T-Shirts", 
-        "Polo T-Shirts",
-        "Long Sleeve T-Shirts",
-        "Sleeveless T-Shirts",
-        "Full Hand T-Shirts",
-        "Track Pants",
-        "Shorts"
+        {
+          name: "T-Shirts",
+          hasSubItems: true,
+          subItems: [
+            "Round Neck T-Shirts",
+            "V-Neck T-Shirts", 
+            "Polo T-Shirts",
+            "Long Sleeve T-Shirts",
+            "Sleeveless T-Shirts",
+            "Full Hand T-Shirts"
+          ]
+        },
+        {
+          name: "Bottom Wear",
+          hasSubItems: true,
+          subItems: [
+            "Track Pants",
+            "Shorts"
+          ]
+        }
       ],
     },
     {
       name: "Women",
       hasDropdown: true,
       items: [
-        "Leggings",
-        "Flat Ankle Leggings",
-        "Flat Full Length Leggings",
-        "Churidhar Ankle Leggings",
-        "Churidhar Full Length Leggings",
-        "Shimmer Leggings",
-        "Saree Shapewear",
-        "Lycra Cotton Shapewear",
-        "Polyester Shapewear",
-        "Shimmer Shapewear",
-        "Night Wear",
-        "Night T-Shirts",
-        "3/4 Leggings",
-        "Shorts"
+        {
+          name: "Leggings",
+          hasSubItems: true,
+          subItems: [
+            "Flat Ankle Leggings",
+            "Flat Full Length Leggings",
+            "Churidhar Ankle Leggings",
+            "Churidhar Full Length Leggings",
+            "Shimmer Leggings",
+            "3/4 Leggings"
+          ]
+        },
+        {
+          name: "Saree Shapewear",
+          hasSubItems: true,
+          subItems: [
+            "Lycra Cotton Shapewear",
+            "Polyester Shapewear",
+            "Shimmer Shapewear"
+          ]
+        },
+        {
+          name: "Night Wear",
+          hasSubItems: true,
+          subItems: [
+            "Night T-Shirts"
+          ]
+        },
+        {
+          name: "Inner Wear",
+          hasSubItems: true,
+          subItems: [
+            "Shorts",
+            "Basic Slips", 
+            "Adjustment Slips",
+            "Panties"
+          ]
+        }
       ],
     },
     {
@@ -160,10 +195,12 @@ export default function Header({
       name: "Hot Sales",
       hasDropdown: false,
       isNew: true,
+      link: "/hot-sales",
     },
     { 
       name: "About", 
-      hasDropdown: false 
+      hasDropdown: false,
+      link: "/about",
     },
   ];
 
@@ -184,11 +221,18 @@ export default function Header({
           {/* Logo */}
           <div className="flex-1 md:flex-none">
             <Link to="/" className="flex items-center">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/f8ef9c4dde67d4cf930390e0018cb8f6984fd4f2?width=593"
-                alt="Indian Flower"
-                className="h-auto w-[296px] max-w-[296px]"
-              />
+              <div className="flex items-center gap-2">
+                {/* Placeholder logo - replace with your logo when ready */}
+                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">FS</span>
+                </div>
+                <div className="hidden sm:block">
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    FashionStore
+                  </h1>
+                  <p className="text-xs text-gray-500 -mt-1">Premium Fashion</p>
+                </div>
+              </div>
             </Link>
           </div>
 
@@ -205,7 +249,7 @@ export default function Header({
                   onMouseLeave={handleDropdownLeave}
                 >
                   <Link
-                    to={item.link || (item.hasDropdown ? '#' : `/products/${item.name.toLowerCase()}`)}
+                    to={item.link || (item.hasDropdown ? `/category/${item.name.toLowerCase()}` : `/products/${item.name.toLowerCase()}`)}
                     className="flex items-center px-[20px] py-[9.5px] text-[#111] font-medium text-[15px] leading-[26.25px] hover:text-[#7C3AED] transition-all duration-300 ease-in-out font-jost"
                   >
                     <span className="relative">
@@ -229,27 +273,59 @@ export default function Header({
                   {item.hasDropdown &&
                     item.items &&
                     activeDropdown === item.name && (
-                      <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-2 animate-in fade-in-0 zoom-in-95 duration-300 ease-out"
+                      <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-2 animate-in fade-in-0 zoom-in-95 duration-300 ease-out"
                            onMouseEnter={() => handleDropdownContentEnter(item.name)}
                            onMouseLeave={handleDropdownContentLeave}
                       >
-                        {item.items.map((subItem, subIndex) => {
-                          // Create URL based on main category and subcategory
-                          const getFilterUrl = (mainCategory: string, subCategory: string) => {
-                            const categorySlug = mainCategory.toLowerCase();
-                            const subcategoryParam = subCategory.toLowerCase().replace(/[^a-z0-9]/g, '-');
-                            return `/products/${categorySlug}?subcategory=${subcategoryParam}`;
+                        {item.items.map((mainCategory: any, mainIndex: number) => {
+                          // Create URL for category pages
+                          const getCategoryUrl = (categoryName: string, parentCategory?: string) => {
+                            let categorySlug = categoryName.toLowerCase()
+                              .replace(/\//g, '-') // Replace forward slashes with hyphens (for "3/4 Leggings" -> "3-4-leggings")
+                              .replace(/[^a-z0-9\s-]/g, '') // Remove special characters but keep hyphens and spaces
+                              .replace(/\s+/g, '-') // Replace spaces with dashes
+                              .replace(/--+/g, '-') // Replace multiple consecutive dashes with single dash
+                              .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
+                            
+                            // Handle specific routing for shorts to differentiate men's and women's
+                            if (categorySlug === 'shorts') {
+                              if (parentCategory === 'Bottom Wear' || item.name === 'Men') {
+                                return `/category/shorts`; // Men's shorts
+                              } else if (parentCategory === 'Inner Wear' || item.name === 'Women') {
+                                return `/category/women-shorts`; // Women's inner wear shorts
+                              }
+                            }
+                            
+                            return `/category/${categorySlug}`;
                           };
                           
                           return (
-                            <Link
-                              key={subIndex}
-                              to={getFilterUrl(item.name, subItem)}
-                              className="block px-4 py-2 text-[14px] text-[#111] hover:text-[#7C3AED] hover:bg-gray-50 transition-all duration-200 ease-in-out transform hover:translate-x-1"
-                              onClick={() => setActiveDropdown(null)}
-                            >
-                              {subItem}
-                            </Link>
+                            <div key={mainIndex} className="mb-3 last:mb-0">
+                              {/* Main Category */}
+                              <Link
+                                to={getCategoryUrl(mainCategory.name, mainCategory.name)}
+                                className="block px-4 py-2 text-[15px] font-semibold text-[#7C3AED] hover:bg-gray-50 transition-all duration-200 ease-in-out"
+                                onClick={() => setActiveDropdown(null)}
+                              >
+                                {mainCategory.name}
+                              </Link>
+                              
+                              {/* Sub Categories */}
+                              {mainCategory.hasSubItems && mainCategory.subItems && (
+                                <div className="ml-4 border-l-2 border-gray-100 pl-2">
+                                  {mainCategory.subItems.map((subItem: string, subIndex: number) => (
+                                    <Link
+                                      key={subIndex}
+                                      to={getCategoryUrl(subItem, mainCategory.name)}
+                                      className="block px-3 py-1.5 text-[13px] text-[#666] hover:text-[#7C3AED] hover:bg-gray-50 transition-all duration-200 ease-in-out transform hover:translate-x-1"
+                                      onClick={() => setActiveDropdown(null)}
+                                    >
+                                      {subItem}
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
@@ -411,27 +487,23 @@ export default function Header({
                 {navigationItems.map((item, index) => (
                   <li key={index}>
                     <div>
-                      <button
-                        className="flex items-center justify-between w-full py-3 text-[#111] font-medium text-[15px] hover:text-[#7C3AED] transition-colors border-b border-gray-100"
-                        onClick={() => {
-                          if (item.hasDropdown) {
+                      {item.hasDropdown ? (
+                        <button
+                          className="flex items-center justify-between w-full py-3 text-[#111] font-medium text-[15px] hover:text-[#7C3AED] transition-colors border-b border-gray-100"
+                          onClick={() => {
                             setActiveDropdown(
                               activeDropdown === item.name ? null : item.name,
                             );
-                          } else {
-                            setIsMobileMenuOpen(false);
-                          }
-                        }}
-                      >
-                        <span className="relative">
-                          {item.name}
-                          {item.isNew && (
-                            <span className="ml-2 bg-[#516CF4] text-white text-[9px] font-semibold px-2 py-1 rounded-sm uppercase">
-                              New
-                            </span>
-                          )}
-                        </span>
-                        {item.hasDropdown && (
+                          }}
+                        >
+                          <span className="relative">
+                            {item.name}
+                            {item.isNew && (
+                              <span className="ml-2 bg-[#516CF4] text-white text-[9px] font-semibold px-2 py-1 rounded-sm uppercase">
+                                New
+                              </span>
+                            )}
+                          </span>
                           <svg
                             className={`w-4 h-4 opacity-50 transition-transform duration-200 ${
                               activeDropdown === item.name ? "rotate-90" : ""
@@ -447,24 +519,79 @@ export default function Header({
                               d="M9 5l7 7-7 7"
                             />
                           </svg>
-                        )}
-                      </button>
+                        </button>
+                      ) : (
+                        <Link
+                          to={item.link || `/products/${item.name.toLowerCase()}`}
+                          className="flex items-center justify-between w-full py-3 text-[#111] font-medium text-[15px] hover:text-[#7C3AED] transition-colors border-b border-gray-100"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <span className="relative">
+                            {item.name}
+                            {item.isNew && (
+                              <span className="ml-2 bg-[#516CF4] text-white text-[9px] font-semibold px-2 py-1 rounded-sm uppercase">
+                                New
+                              </span>
+                            )}
+                          </span>
+                        </Link>
+                      )}
 
                       {/* Mobile Submenu */}
                       {item.hasDropdown &&
                         item.items &&
                         activeDropdown === item.name && (
                           <div className="pl-4 py-2 bg-gray-50">
-                            {item.items.map((subItem, subIndex) => (
-                              <a
-                                key={subIndex}
-                                href="#"
-                                className="block py-2 text-[13px] text-[#666] hover:text-[#7C3AED] transition-colors"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                              >
-                                {subItem}
-                              </a>
-                            ))}
+                            {item.items.map((mainCategory: any, mainIndex: number) => {
+                              const getCategoryUrl = (categoryName: string, parentCategory?: string) => {
+                                let categorySlug = categoryName.toLowerCase()
+                                  .replace(/\//g, '-') // Replace forward slashes with hyphens (for "3/4 Leggings" -> "3-4-leggings")
+                                  .replace(/[^a-z0-9\s-]/g, '') // Remove special characters but keep hyphens and spaces
+                                  .replace(/\s+/g, '-') // Replace spaces with dashes
+                                  .replace(/--+/g, '-') // Replace multiple consecutive dashes with single dash
+                                  .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
+                                
+                                // Handle specific routing for shorts to differentiate men's and women's
+                                if (categorySlug === 'shorts') {
+                                  if (parentCategory === 'Bottom Wear' || item.name === 'Men') {
+                                    return `/category/shorts`; // Men's shorts
+                                  } else if (parentCategory === 'Inner Wear' || item.name === 'Women') {
+                                    return `/category/women-shorts`; // Women's inner wear shorts
+                                  }
+                                }
+                                
+                                return `/category/${categorySlug}`;
+                              };
+                              
+                              return (
+                                <div key={mainIndex} className="mb-2">
+                                  {/* Main Category */}
+                                  <Link
+                                    to={getCategoryUrl(mainCategory.name, mainCategory.name)}
+                                    className="block py-2 text-[14px] font-semibold text-[#7C3AED] hover:text-[#5B21B6] transition-colors"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                  >
+                                    {mainCategory.name}
+                                  </Link>
+                                  
+                                  {/* Sub Categories */}
+                                  {mainCategory.hasSubItems && mainCategory.subItems && (
+                                    <div className="ml-3 border-l-2 border-gray-200 pl-2">
+                                      {mainCategory.subItems.map((subItem: string, subIndex: number) => (
+                                        <Link
+                                          key={subIndex}
+                                          to={getCategoryUrl(subItem, mainCategory.name)}
+                                          className="block py-1.5 text-[12px] text-[#666] hover:text-[#7C3AED] transition-colors"
+                                          onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                          {subItem}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
                     </div>

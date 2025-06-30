@@ -1,0 +1,21 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/spa",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/serverless"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_SUPABASE_URL": "https://hjletxyhuvuprbrarhcf.supabase.co",
+    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqbGV0eHlodXZ1cHJicmFyaGNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExOTI1NTgsImV4cCI6MjA2Njc2ODU1OH0.BlBWnFmElv-zsr6FL0dJXJQyGWZFmAF20-50qKVOXn8"
+  }
+}

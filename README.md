@@ -49,6 +49,16 @@ A modern e-commerce platform built with React, TypeScript, and Supabase.
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
+   
+   **Note**: If you don't have Supabase set up yet, the application will work with mock data for demonstration purposes.
+
+4. Run database migrations (if using Supabase):
+   ```bash
+   # If you have Supabase CLI installed
+   supabase db reset
+   
+   # Or manually run the migrations in your Supabase dashboard
+   ```
 
 4. Start the development server:
    ```bash

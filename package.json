@@ -15,6 +15,7 @@
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.ts",
+    "build:vercel": "npm run build:client",
     "start": "node dist/server/node-build.mjs",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
@@ -22,6 +23,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.3",
+    "@vercel/node": "^5.3.0",
     "express": "^4.18.2",
     "zod": "^3.23.8"
   },

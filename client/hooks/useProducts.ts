@@ -60,8 +60,130 @@ export function useProducts() {
 
       if (error) throw error
       setProducts(data || [])
+      setError(null)
     } catch (err) {
+      console.error('Database fetch failed, using mock data:', err)
       setError(err instanceof Error ? err.message : 'An error occurred')
+      
+      // Fallback to mock data when database connection fails
+      const mockProducts: Product[] = [
+        {
+          id: '1',
+          name: 'Men\'s Round Neck T-Shirt - Premium Cotton',
+          description: 'Premium quality round neck t-shirt made from 100% cotton',
+          category_id: '1',
+          subcategory: 'Round Neck T-Shirts',
+          price: 399,
+          original_price: 499,
+          sku: 'MEN-RN-TSH-001',
+          slug: 'mens-round-neck-tshirt-premium',
+          is_active: true,
+          is_hot_sale: true,
+          rating: 5,
+          review_count: 45,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          category: { name: 'Men', slug: 'men' },
+          images: [
+            {
+              id: '1',
+              image_url: '/placeholder.svg',
+              alt_text: 'Round Neck T-Shirt',
+              is_primary: true,
+              sort_order: 1
+            }
+          ],
+          variants: [
+            {
+              id: '1',
+              size: 'M',
+              color_name: 'Black',
+              color_code: '#000000',
+              stock_quantity: 50,
+              price_adjustment: 0,
+              is_active: true
+            }
+          ]
+        },
+        {
+          id: '2',
+          name: 'Women\'s 3/4 Leggings - Comfort Fit',
+          description: 'Comfortable 3/4 length leggings perfect for workouts and casual wear',
+          category_id: '2',
+          subcategory: '3/4 Leggings',
+          price: 449,
+          original_price: 549,
+          sku: 'WOM-34-LEG-001',
+          slug: 'womens-3-4-leggings-comfort',
+          is_active: true,
+          is_hot_sale: true,
+          rating: 4,
+          review_count: 28,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          category: { name: 'Women', slug: 'women' },
+          images: [
+            {
+              id: '2',
+              image_url: '/placeholder.svg',
+              alt_text: '3/4 Leggings',
+              is_primary: true,
+              sort_order: 1
+            }
+          ],
+          variants: [
+            {
+              id: '2',
+              size: 'M',
+              color_name: 'Navy',
+              color_code: '#000080',
+              stock_quantity: 30,
+              price_adjustment: 0,
+              is_active: true
+            }
+          ]
+        },
+        {
+          id: '3',
+          name: 'Men\'s V-Neck T-Shirt - Classic Style',
+          description: 'Stylish V-neck t-shirt crafted from premium cotton blend',
+          category_id: '1',
+          subcategory: 'V-Neck T-Shirts',
+          price: 449,
+          original_price: 549,
+          sku: 'MEN-VN-TSH-002',
+          slug: 'mens-v-neck-tshirt-classic',
+          is_active: true,
+          is_hot_sale: false,
+          rating: 4,
+          review_count: 32,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          category: { name: 'Men', slug: 'men' },
+          images: [
+            {
+              id: '3',
+              image_url: '/placeholder.svg',
+              alt_text: 'V-Neck T-Shirt',
+              is_primary: true,
+              sort_order: 1
+            }
+          ],
+          variants: [
+            {
+              id: '3',
+              size: 'L',
+              color_name: 'Purple',
+              color_code: '#7C3AED',
+              stock_quantity: 25,
+              price_adjustment: 0,
+              is_active: true
+            }
+          ]
+        }
+      ];
+      
+      setProducts(mockProducts)
     } finally {
       setLoading(false)
     }

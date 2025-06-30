@@ -14,15 +14,15 @@ interface ColorOption {
 }
 
 interface ProductCardProps {
-  id: string;
+  id: number;
   name: string;
   price: string;
   image: string;
   rating?: number;
   colors?: ColorOption[];
-  onQuickView?: (id: string) => void;
-  onAddToCart?: (id: string) => void;
-  onColorSelect?: (id: string, colorIndex: number) => void;
+  onQuickView?: (id: number) => void;
+  onAddToCart?: (id: number) => void;
+  onColorSelect?: (id: number, colorIndex: number) => void;
   className?: string;
 }
 
@@ -125,8 +125,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Quick View Button */}
         <div
           className={cn(
-            "absolute top-4 right-4 transition-all duration-300",
-            isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90",
+            "absolute top-4 right-4 transition-all duration-300 z-10",
+            "opacity-100 scale-100", // Always visible now
           )}
         >
           <QuickViewButton
@@ -189,9 +189,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 // Product Grid Component for displaying multiple products
 interface ProductGridProps {
   products: ProductCardProps[];
-  onQuickView?: (id: string) => void;
-  onAddToCart?: (id: string) => void;
-  onColorSelect?: (id: string, colorIndex: number) => void;
+  onQuickView?: (id: number) => void;
+  onAddToCart?: (id: number) => void;
+  onColorSelect?: (id: number, colorIndex: number) => void;
   className?: string;
 }
 
@@ -225,9 +225,9 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
 // Horizontal Scrolling Product Row (like in BestSelling)
 interface ProductRowProps {
   products: ProductCardProps[];
-  onQuickView?: (id: string) => void;
-  onAddToCart?: (id: string) => void;
-  onColorSelect?: (id: string, colorIndex: number) => void;
+  onQuickView?: (id: number) => void;
+  onAddToCart?: (id: number) => void;
+  onColorSelect?: (id: number, colorIndex: number) => void;
   className?: string;
 }
 
