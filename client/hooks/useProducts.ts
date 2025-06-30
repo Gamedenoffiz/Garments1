@@ -254,6 +254,13 @@ export function useProducts() {
 
   const getHotSaleProducts = async (): Promise<Product[]> => {
     try {
+      // Test connection first
+      const connectionOk = await testSupabaseConnection();
+      if (!connectionOk) {
+        console.warn("⚠️ Supabase connection issue, returning empty array");
+        return [];
+      }
+
       const { data, error } = await supabase
         .from("products")
         .select(
