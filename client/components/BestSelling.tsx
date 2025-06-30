@@ -35,7 +35,10 @@ export default function BestSelling({
         const hotSaleProducts = await getHotSaleProducts();
         setBestSellingProducts(hotSaleProducts);
       } catch (error) {
-        console.error('Error fetching best selling products:', error);
+        console.error(
+          "Error fetching hot sale products:",
+          error instanceof Error ? error.message : String(error),
+        );
       } finally {
         setLoading(false);
       }
@@ -45,26 +48,33 @@ export default function BestSelling({
   }, [getHotSaleProducts]);
 
   // Convert database products to the format expected by ProductRow
-  const products = bestSellingProducts.map(product => ({
+  const products = bestSellingProducts.map((product) => ({
     id: parseInt(product.id), // Convert to number for ProductCard compatibility
     name: product.name,
     price: `Rs. ${product.price.toLocaleString()}.00`,
-    image: product.images?.[0]?.image_url || '/placeholder.svg',
+    image: product.images?.[0]?.image_url || "/placeholder.svg",
     rating: product.rating || 4,
-    colors: product.variants?.filter(v => v.color_code).map(v => ({
-      name: v.color_name || 'Color',
-      color: v.color_code || '#000000'
-    })) || [
-      { name: 'Black', color: '#000000' },
-      { name: 'White', color: '#ffffff' },
-      { name: 'Gray', color: '#808080' }
+    colors: product.variants
+      ?.filter((v) => v.color_code)
+      .map((v) => ({
+        name: v.color_name || "Color",
+        color: v.color_code || "#000000",
+      })) || [
+      { name: "Black", color: "#000000" },
+      { name: "White", color: "#ffffff" },
+      { name: "Gray", color: "#808080" },
     ],
-    sizes: product.variants?.filter(v => v.size).map(v => v.size!).filter(Boolean) || ['S', 'M', 'L', 'XL'],
-    category: product.category?.name || 'General',
+    sizes: product.variants
+      ?.filter((v) => v.size)
+      .map((v) => v.size!)
+      .filter(Boolean) || ["S", "M", "L", "XL"],
+    category: product.category?.name || "General",
   }));
 
   const handleQuickView = (productId: number) => {
-    const product = bestSellingProducts.find((p) => parseInt(p.id) === productId);
+    const product = bestSellingProducts.find(
+      (p) => parseInt(p.id) === productId,
+    );
     if (onQuickView && product) {
       onQuickView(product.id);
     } else if (product) {
@@ -74,18 +84,21 @@ export default function BestSelling({
   };
 
   const handleAddToCart = async (productId: number) => {
-    const product = bestSellingProducts.find((p) => parseInt(p.id) === productId);
+    const product = bestSellingProducts.find(
+      (p) => parseInt(p.id) === productId,
+    );
     if (!product) return;
 
     // If parent component has custom add to cart logic, use it
     if (onAddToCart) {
-      const primaryImage = product.images.find(img => img.is_primary) || product.images[0];
+      const primaryImage =
+        product.images.find((img) => img.is_primary) || product.images[0];
       onAddToCart({
         id: product.id,
         name: product.name,
         price: product.price,
-        size: product.variants?.[0]?.size || 'M',
-        image: primaryImage?.image_url || '/placeholder.svg'
+        size: product.variants?.[0]?.size || "M",
+        image: primaryImage?.image_url || "/placeholder.svg",
       });
       return;
     }
@@ -95,40 +108,44 @@ export default function BestSelling({
       toast({
         title: "Login Required",
         description: "Please login to add items to cart",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     try {
       // Get the first available variant or null if no variants
-      const firstVariant = product.variants?.find(v => v.is_active && v.stock_quantity > 0);
-      
+      const firstVariant = product.variants?.find(
+        (v) => v.is_active && v.stock_quantity > 0,
+      );
+
       await addToDbCart(product.id, firstVariant?.id || null, 1);
-      
-      const variantInfo = firstVariant 
-        ? ` (${firstVariant.size || 'Standard'} - ${firstVariant.color_name || 'Default'})` 
-        : '';
-      
+
+      const variantInfo = firstVariant
+        ? ` (${firstVariant.size || "Standard"} - ${firstVariant.color_name || "Default"})`
+        : "";
+
       toast({
         title: "Added to Cart!",
         description: `${product.name}${variantInfo} added to cart`,
       });
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error("Error adding to cart:", error);
       toast({
         title: "Error",
         description: "Error adding to cart. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
   const handleColorSelect = (productId: number, colorIndex: number) => {
     console.log("Color selected:", productId, colorIndex);
-    const product = products.find(p => p.id === productId);
+    const product = products.find((p) => p.id === productId);
     if (product && product.colors[colorIndex]) {
-      console.log(`Selected ${product.colors[colorIndex].name} for ${product.name}`);
+      console.log(
+        `Selected ${product.colors[colorIndex].name} for ${product.name}`,
+      );
     }
   };
 
@@ -178,7 +195,8 @@ export default function BestSelling({
             Best Selling Products
           </h2>
           <p className="text-[#555] text-[14px] font-normal leading-[26.25px]">
-            Discover our most popular garments for men and women with all size and color options available.
+            Discover our most popular garments for men and women with all size
+            and color options available.
           </p>
         </div>
 
