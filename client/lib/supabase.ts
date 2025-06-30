@@ -25,6 +25,27 @@ if (!supabaseUrl || !supabaseAnonKey) {
   supabase = createClient(supabaseUrl, supabaseAnonKey);
 }
 
+// Test connection to Supabase
+export const testSupabaseConnection = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("count")
+      .limit(1);
+
+    if (error) {
+      console.error("❌ Supabase connection test failed:", error);
+      return false;
+    }
+
+    console.log("✅ Supabase connection test successful");
+    return true;
+  } catch (err) {
+    console.error("❌ Supabase connection test error:", err);
+    return false;
+  }
+};
+
 export { supabase };
 
 // Database types
