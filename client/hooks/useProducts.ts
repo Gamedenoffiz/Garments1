@@ -271,10 +271,12 @@ export function useProducts() {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.error(
-        "Error fetching hot sale products:",
-        err instanceof Error ? err.message : String(err),
-      );
+      console.error("Error fetching hot sale products:", err);
+      console.error("Error details:", {
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+        supabaseError: err,
+      });
       return [];
     }
   };
