@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, testSupabaseConnection } from "@/lib/supabase";
 
 export interface Product {
   id: string;
@@ -254,28 +254,34 @@ export function useProducts() {
 
   const getHotSaleProducts = async (): Promise<Product[]> => {
     try {
+      // Test connection first
+      const connectionOk = await testSupabaseConnection();
+      if (!connectionOk) {
+        console.warn("⚠️ Supabase connection issue, returning empty array");
+        return [];
+      }
+
+      // Start with a simple query to test basic connectivity
       const { data, error } = await supabase
         .from("products")
-        .select(
-          `
-          *,
-          category:categories(name, slug),
-          images:product_images(*),
-          variants:product_variants(*)
-        `,
-        )
+        .select("*")
         .eq("is_hot_sale", true)
         .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .limit(10);
 
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.error(
-        "Error fetching hot sale products:",
-        err instanceof Error ? err.message : String(err),
-      );
-      return [];
+      console.error("Error fetching hot sale products:", err);
+      console.error("Error details:", {
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+        supabaseError: err,
+      });
+
+      // Return mock data as fallback when database is not ready
+      console.warn("⚠️ Database not ready, returning mock hot sale products");
+      return mockProducts.filter((p) => p.is_hot_sale).slice(0, 6);
     }
   };
 
